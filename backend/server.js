@@ -3,8 +3,13 @@ const cors = require("cors");
 const mongoose = require("mongoose");
 
 const app = express();
+
+
 app.use(cors());
 app.use(express.json());
+
+// ✅ Import Feedback model here
+//const Feedback = require("./models/Feedback");
 
 // Connect to MongoDB
 mongoose
@@ -15,56 +20,34 @@ mongoose
   .then(() => console.log("✅ Connected to MongoDB"))
   .catch((err) => console.error("❌ MongoDB connection error:", err));
 
-// Define Schema & Model
-const feedbackSchema = new mongoose.Schema({
-  name: String,
-  rating: Number,
-  comment: String,
-});
+  const Feedback = require("./models/Feedback");
 
-const Feedback = mongoose.model("Feedback", feedbackSchema);
-
-// Routes
-app.get("/feedback", async (req, res) => {
-  const feedbacks = await Feedback.find();
-  res.json(feedbacks);
-});
-
-app.post("/feedback", async (req, res) => {
-  try {
-    const { name, rating, comment } = req.body;
-    console.log("📥 Received:", req.body); // ADD THIS
-    const newFeedback = new Feedback({ name, rating, comment });
-    await newFeedback.save();
-    res.status(201).json(newFeedback);
-  } catch (err) {
-    console.error("❌ Save error:", err); // ADD THIS
-    res.status(500).json({ error: "Failed to save feedback" });
-  }
-});
-
+// Your routes below
 app.get("/analytics", async (req, res) => {
   try {
     const feedbacks = await Feedback.find();
-    const total = feedbacks.length;
-    const average =
-      total === 0
-        ? 0
-        : feedbacks.reduce((sum, f) => sum + Number(f.rating), 0) / total;
+
+    const totalFeedbacks = feedbacks.length;
+    const averageRating =
+      totalFeedbacks > 0
+        ? (
+            feedbacks.reduce((sum, f) => sum + Number(f.rating), 0) /
+            totalFeedbacks
+          ).toFixed(2)
+        : 0;
 
     res.json({
-      totalFeedbacks: total,
-      averageRating: average.toFixed(2),
+      totalFeedbacks,
+      averageRating,
     });
   } catch (err) {
-    res.status(500).json({ error: "Failed to fetch analytics" });
+    console.error("Analytics error:", err);
+    res.status(500).json({ error: "Failed to generate analytics" });
   }
 });
+// Add POST /feedback and GET /feedback routes if not already
 
-
-
-// Start server
-const PORT = 5000;
+const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
   console.log(`🚀 Server running on http://localhost:${PORT}`);
 });

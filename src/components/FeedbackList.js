@@ -1,42 +1,28 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 
-function FeedbackList() {
+const FeedbackList = () => {
   const [feedbacks, setFeedbacks] = useState([]);
-  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-   fetch("https://feedback-app-2hqw.onrender.com/feedback")
+    fetch("https://feedback-app-2hqw.onrender.com/feedback")
       .then((res) => res.json())
-      .then((data) => {
-        setFeedbacks(data);
-        setLoading(false);
-      })
-      .catch((err) => {
-        console.error("Failed to fetch feedbacks:", err);
-        setLoading(false);
-      });
+      .then(setFeedbacks)
+      .catch(console.error);
   }, []);
 
-  if (loading) return <p>Loading feedbacks...</p>;
-
-  if (feedbacks.length === 0) return <p>No feedbacks yet.</p>;
+  if (feedbacks.length === 0) return <p className="text-center mt-10 text-gray-400">No feedbacks yet.</p>;
 
   return (
-    <div className="mt-6">
-      <h3 className="text-lg font-semibold mb-2">Recent Feedbacks</h3>
-      <ul className="space-y-4 max-h-64 overflow-y-auto">
-        {feedbacks.map(({ _id, name, rating, comment }) => (
-          <li
-            key={_id}
-            className="p-4 border rounded-lg shadow-sm bg-white"
-          >
-            <p><strong>{name}</strong> rated: <span className="font-bold">{rating} ⭐</span></p>
-            <p className="text-gray-700 italic">"{comment || "No comment"}"</p>
-          </li>
-        ))}
-      </ul>
+    <div className="max-w-md mx-auto mt-10 space-y-4">
+      <h3 className="text-xl font-bold text-[#7F5AF0] mb-2">💬 Recent Feedbacks</h3>
+      {feedbacks.map(({ _id, name, rating, comment }) => (
+        <div key={_id} className="bg-[#1A1A1A] text-white p-4 rounded-xl shadow-lg">
+          <p><strong>{name}</strong> rated <span className="font-bold">{rating} ⭐</span></p>
+          <p className="text-gray-400 italic">"{comment || "No comment"}"</p>
+        </div>
+      ))}
     </div>
   );
-}
+};
 
 export default FeedbackList;
