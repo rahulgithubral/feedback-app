@@ -10,7 +10,7 @@ export default function FeedbackForm() {
   e.preventDefault();
 
   try {
-    const res = await fetch("http://localhost:5000/feedback", {
+    const res = await fetch("https://feedback-app-2hqw.onrender.com/feedback", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(formData),

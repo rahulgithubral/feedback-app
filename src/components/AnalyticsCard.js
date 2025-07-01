@@ -5,7 +5,7 @@ function AnalyticsCard() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch("http://localhost:5000/analytics")
+    fetch("https://feedback-app-2hqw.onrender.com/analytics")
       .then((res) => res.json())
       .then((info) => {
         setData(info);

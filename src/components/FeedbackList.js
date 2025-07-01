@@ -5,7 +5,7 @@ function FeedbackList() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch("http://localhost:5000/feedback")
+   fetch("https://feedback-app-2hqw.onrender.com/feedback")
       .then((res) => res.json())
       .then((data) => {
         setFeedbacks(data);
