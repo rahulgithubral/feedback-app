@@ -11,14 +11,7 @@ https://feedback-app-2hqw.onrender.com/
 Test endpoint:
 https://feedback-app-2hqw.onrender.com/analytics
 
-📸 Screenshots
-Add screenshots or recordings of:
 
-Feedback form
-
-Analytics with chart
-
-Dark mode UI
 
 🚀 Features
 Submit name, comment, and rating (1–5)
