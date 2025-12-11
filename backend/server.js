@@ -1,3 +1,4 @@
+require('dotenv').config();
 const express = require("express");
 const cors = require("cors");
 const mongoose = require("mongoose");
@@ -13,10 +14,10 @@ app.use(express.json());
 
 // Connect to MongoDB
 mongoose
-  .connect("mongodb+srv://raldell1500:raladmin1594@ralfeedcluster.lpqxmxw.mongodb.net/feedbackDB?retryWrites=true&w=majority&appName=RALfeedCluster", {
+.connect(process.env.MONGODB_URI, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
-  })
+  })  })
   .then(() => console.log("✅ Connected to MongoDB"))
   .catch((err) => console.error("❌ MongoDB connection error:", err));
 
@@ -46,6 +47,42 @@ app.get("/analytics", async (req, res) => {
   }
 });
 // Add POST /feedback and GET /feedback routes if not already
+
+// GET /feedback - retrieve all feedbacks
+app.get("/feedback", async (req, res) => {
+  try {
+    const feedbacks = await Feedback.find().sort({ createdAt: -1 });
+    res.json(feedbacks);
+  } catch (err) {
+    console.error("Feedback fetch error:", err);
+    res.status(500).json({ error: "Failed to fetch feedback" });
+  }
+});
+
+// POST /feedback - submit new feedback
+app.post("/feedback", async (req, res) => {
+  try {
+    const { name, rating, comment } = req.body;
+    
+    // Validation
+    if (!name || !rating || !comment) {
+      return res.status(400).json({ error: "All fields are required" });
+    }
+    
+    if (rating < 1 || rating > 5) {
+      return res.status(400).json({ error: "Rating must be between 1 and 5" });
+    }
+    
+    const newFeedback = new Feedback({ name, rating, comment });
+    await newFeedback.save();
+    res.status(201).json(newFeedback);
+  } catch (err) {
+    console.error("Feedback submission error:", err);
+    res.status(500).json({ error: "Failed to submit feedback" });
+  }
+});
+
+
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
